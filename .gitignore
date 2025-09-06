@@ -1,0 +1,17 @@
+venv/
+env/
+.venv/
+
+# cache do python
+__pycache__/
+*.pyc
+
+.vscode/
+.idea/
+
+# variáveis de ambiente
+.env
+
+# SO
+.DS_Store
+Thumbs.db
