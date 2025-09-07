@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  # banco de dados postgresql
+  db:
+    image: postgres:15-alpine 
+    volumes:
+      # persistencia dos dados
+      - ./postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=medpark_user
+      - POSTGRES_PASSWORD=medpark_password
+      - POSTGRES_DB=medpark_db
+    ports:
+      - "5432:5432"
+
+  # fastapi
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app #live sync
+    environment:
+      - DATABASE_URL=postgresql://medpark_user:medpark_password@db/medpark_db
+    depends_on:
+      - db
