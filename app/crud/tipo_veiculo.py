@@ -1,3 +1,4 @@
+from sqlalchemy.orm import Session
 from app.models import tipo_veiculo as models
 from app.schemas import tipo_veiculo as schemas
 
@@ -29,4 +30,30 @@ def create_tipo_veiculo(db: Session, tipo_veiculo: schemas.TipoVeiculoCreate):
     db.refresh(db_tipo_veiculo)
 
     # retorna o objeto, agora com id
+    return db_tipo_veiculo
+
+def update_tipo_veiculo(db: Session, tipo_veiculo_id: int, tipo_veiculo: schemas.TipoVeiculoUpdate):
+    # busca registro no bd pelo id
+    db_tipo_veiculo = db.query(models.TipoVeiculo).filter(models.TipoVeiculo.id == tipo_veiculo_id).first()
+    
+    # se o registro existir
+    if db_tipo_veiculo:
+        # pega dados do schema e converte em dicionario
+        update_data = tipo_veiculo.model_dump(exclude_unset=True)
+
+        # itera sobre os dados e atualiza os campos
+        for key, value in update_data.items():
+            setattr(db_tipo_veiculo, key, value)
+
+        db.commit()
+        db.refresh(db_tipo_veiculo)
+
+    return db_tipo_veiculo
+
+def delete_tipo_veiculo(db: Session, tipo_veiculo_id: int):
+    db_tipo_veiculo = db.query(models.TipoVeiculo).filter(models.TipoVeiculo.id == tipo_veiculo_id).first()
+    if db_tipo_veiculo:
+        db.delete(db_tipo_veiculo)
+        db.commit()
+
     return db_tipo_veiculo
