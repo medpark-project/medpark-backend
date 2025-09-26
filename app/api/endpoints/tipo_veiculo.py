@@ -19,6 +19,14 @@ def read_tipos_veiculo(skip: int = 0, limit: int = 100, db: Session = Depends(ge
     tipos_veiculo = crud.get_tipos_veiculo(db, skip=skip, limit=limit)
     return tipos_veiculo
 
+# endpoint READ tipo_veiculo by id
+@router.get("/{tipo_veiculo_id}", response_model=schemas.TipoVeiculo)
+def read_tipo_veiculo(tipo_veiculo_id: int, db: Session = Depends(get_db)):
+    db_tipo_veiculo = crud.get_tipo_veiculo(db, tipo_veiculo_id=tipo_veiculo_id)
+    if db_tipo_veiculo is None:
+        raise HTTPException(status_code=404, detail="Tipo de Veículo não encontrado.")
+    return db_tipo_veiculo
+
 # UPDATE
 @router.put("/{tipo_veiculo_id}", response_model=schemas.TipoVeiculo)
 def update_tipo_veiculo(tipo_veiculo_id: int, tipo_veiculo: schemas.TipoVeiculoUpdate, db: Session = Depends(get_db)):
