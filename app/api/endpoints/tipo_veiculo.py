@@ -34,7 +34,7 @@ def update_tipo_veiculo(tipo_veiculo_id: int, tipo_veiculo: schemas.TipoVeiculoU
     if db_tipo_veiculo is None:
         raise HTTPException(status_code=404, detail="Tipo de Veiculo não encontrado.")
     
-    return crud.update_tipo_veiculo(db=db, db_tipo_veiculo=db_tipo_veiculo, tipo_veiculo=tipo_veiculo)
+    return crud.update_tipo_veiculo(db=db, tipo_veiculo_id=tipo_veiculo_id, tipo_veiculo=tipo_veiculo)
 
 """
 padronizei que as funções de atualização e deleção recebem um objeto e não um id. os endpoints
@@ -47,4 +47,4 @@ def delete_tipo_veiculo(tipo_veiculo_id: int, db: Session = Depends(get_db)):
     if db_tipo_veiculo is None:
         raise HTTPException(status_code=404, detail="Tipo de Veículo não encontrado.")
     
-    return crud.delete_tipo_veiculo(db=db, db_tipo_veiculo=db_tipo_veiculo)
+    return crud.delete_tipo_veiculo(db=db, tipo_veiculo_id=tipo_veiculo_id)
