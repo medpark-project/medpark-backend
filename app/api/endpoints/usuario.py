@@ -37,6 +37,7 @@ def update_usuario(usuario_id: int, usuario: schemas.UsuarioUpdate, db: Session 
         raise HTTPException(status_code=404, detail="Usuário não encontrado.")
     return crud.update_usuario(db=db, db_usuario=db_usuario, usuario=usuario)
 
+# DELETE
 @router.delete("/{usuario_id}", response_model=schemas.Usuario)
 def delete_usuario(usuario_id: int, db: Session = Depends(get_db)):
     db_usuario = crud.get_usuario(db, usuario_id=usuario_id)
