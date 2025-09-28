@@ -3,6 +3,10 @@ uvicorn[standard]
 sqlalchemy
 psycopg2-binary
 pydantic
+pydantic[email]
 # testing libs
 pytest
 httpx
+passlib[bcrypt]
+python-jose[cryptography]
+bcrypt

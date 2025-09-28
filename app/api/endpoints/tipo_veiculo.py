@@ -36,6 +36,10 @@ def update_tipo_veiculo(tipo_veiculo_id: int, tipo_veiculo: schemas.TipoVeiculoU
     
     return crud.update_tipo_veiculo(db=db, tipo_veiculo_id=tipo_veiculo_id, tipo_veiculo=tipo_veiculo)
 
+"""
+padronizei que as funções de atualização e deleção recebem um objeto e não um id. os endpoints
+serão responsáveis por verificar se o objeto se encontra na base antes de chamar a função
+"""
 # DELETE
 @router.delete("/{tipo_veiculo_id}", response_model=schemas.TipoVeiculo)
 def delete_tipo_veiculo(tipo_veiculo_id: int, db: Session = Depends(get_db)):
