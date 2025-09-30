@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgresql:15-alpine
+        image: postgre:15-alpine
         env:
           POSTGRES_USER: medpark_user
           POSTGRES_PASSWORD: medpark_password
