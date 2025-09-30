@@ -24,6 +24,9 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+    env:
+      FAKE_DATABASE_URL: "postgresql://medpark_user:medpark_password@localhost:5432/medpark_db_test"
+      PYTHONPATH: .
 
     steps:
       - name: Checkout repository
@@ -40,7 +43,4 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run tests with Pytest
-        env:
-          FAKE_DATABASE_URL: "postgresql://medpark_user:medpark_password@localhost:5432/medpark_db_test"
-          PYTHONPATH: .
         run: pytest
