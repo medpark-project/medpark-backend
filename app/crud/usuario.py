@@ -26,6 +26,9 @@ def get_usuarios(db: Session, skip: int = 0, limit: int = 100) -> list[models.Us
 # CREATE
 
 def create_usuario(db: Session, usuario: schemas.UsuarioCreate) -> models.Usuario:
+    if len(usuario.senha) < 8:
+        raise ValueError("A senha deve ter no mínimo 8 caracteres.")
+    
     hashed_password = get_password_hash(usuario.senha)
 
     db_usuario = models.Usuario(
@@ -42,6 +45,10 @@ def create_usuario(db: Session, usuario: schemas.UsuarioCreate) -> models.Usuari
 # UPDATE
 def update_usuario(db: Session, db_usuario: models.Usuario, usuario: schemas.UsuarioUpdate) -> models.Usuario:
     update_data = usuario.model_dump(exclude_unset=True)
+
+    if "senha" in update_data and update_data["senha"]:
+        if len(update_data["senha"]) < 8:
+            raise ValueError("A senha deve ter no mínimo 8 caracteres.")
 
     if "senha" in update_data and update_data["senha"]:
         hashed_password = get_password_hash(update_data["senha"])
