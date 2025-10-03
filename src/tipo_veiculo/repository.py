@@ -1,27 +1,27 @@
 from sqlalchemy.orm import Session
-from app.models import tipo_veiculo as models
-from app.schemas import tipo_veiculo as schemas
+from src.tipo_veiculo import model
+from src.tipo_veiculo import schema
 
 # READ
 
 # get tipo_veiculo by id
-def get_tipo_veiculo(db: Session, tipo_veiculo_id: int) -> models.TipoVeiculo | None:
-    return db.query(models.TipoVeiculo).filter(models.TipoVeiculo.id == tipo_veiculo_id).first()
+def get_tipo_veiculo(db: Session, tipo_veiculo_id: int) -> model.TipoVeiculo | None:
+    return db.query(model.TipoVeiculo).filter(model.TipoVeiculo.id == tipo_veiculo_id).first()
 
 # skip e limit para paginacao
 # get all tipo_veiculo
-def get_tipos_veiculo(db: Session, skip: int = 0, limit: int = 100) -> list[models.TipoVeiculo]:
-    return db.query(models.TipoVeiculo).offset(skip).limit(limit).all()
+def get_tipos_veiculo(db: Session, skip: int = 0, limit: int = 100) -> list[model.TipoVeiculo]:
+    return db.query(model.TipoVeiculo).offset(skip).limit(limit).all()
 
 # CREATE
 
-def create_tipo_veiculo(db: Session, tipo_veiculo: schemas.TipoVeiculoCreate) -> models.TipoVeiculo:
+def create_tipo_veiculo(db: Session, tipo_veiculo: schema.TipoVeiculoCreate) -> model.TipoVeiculo:
     if tipo_veiculo.tarifa_hora < 0:
         raise ValueError("A tarifa por hora não pode ser negativa.")
     
     # cria um modelo sqlalchemy a partir dos dados recebidos no schema pydantic
     # **tipo_veiculo.model_dump() traduz o schema num formato que o SQLAlchemy entende
-    db_tipo_veiculo = models.TipoVeiculo(**tipo_veiculo.model_dump())
+    db_tipo_veiculo = model.TipoVeiculo(**tipo_veiculo.model_dump())
 
     # adiciona novo objeto a session do db
     db.add(db_tipo_veiculo)
@@ -35,7 +35,7 @@ def create_tipo_veiculo(db: Session, tipo_veiculo: schemas.TipoVeiculoCreate) ->
     # retorna o objeto, agora com id
     return db_tipo_veiculo
 
-def update_tipo_veiculo(db: Session, db_tipo_veiculo: models.TipoVeiculo, tipo_veiculo: schemas.TipoVeiculoUpdate) -> models.TipoVeiculo:
+def update_tipo_veiculo(db: Session, db_tipo_veiculo: model.TipoVeiculo, tipo_veiculo: schema.TipoVeiculoUpdate) -> model.TipoVeiculo:
     # pega dados do schema e converte em dicionario
     update_data = tipo_veiculo.model_dump(exclude_unset=True)
 
@@ -55,7 +55,7 @@ def update_tipo_veiculo(db: Session, db_tipo_veiculo: models.TipoVeiculo, tipo_v
 padronizei que as funções de atualização e deleção recebem um objeto e não um id. os endpoints
 serão responsáveis por verificar se o objeto se encontra na base antes de chamar a função
 """
-def delete_tipo_veiculo(db: Session, db_tipo_veiculo: models.TipoVeiculo) -> models.TipoVeiculo:
+def delete_tipo_veiculo(db: Session, db_tipo_veiculo: model.TipoVeiculo) -> model.TipoVeiculo:
     db.delete(db_tipo_veiculo)
     db.commit()
     return db_tipo_veiculo

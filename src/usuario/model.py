@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Enum as SQLAlchemyEnum
-from app.db.session import Base
+from src.db.session import Base
 import enum
 
 class PerfilUsuario(str, enum.Enum):

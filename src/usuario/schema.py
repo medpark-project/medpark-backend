@@ -1,4 +1,4 @@
-from app.models.usuario import PerfilUsuario
+from src.usuario.model import PerfilUsuario
 from pydantic import BaseModel, ConfigDict, EmailStr
 from typing import Optional
 

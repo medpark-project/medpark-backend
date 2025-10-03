@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float
-from app.db.session import Base
+from src.db.session import Base
 
 class PlanoMensalista(Base):
     __tablename__ = "planos_mensalista"

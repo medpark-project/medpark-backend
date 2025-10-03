@@ -2,8 +2,8 @@
 
 import pytest
 from unittest.mock import MagicMock
-from app.crud.usuario import create_usuario
-from app.schemas.usuario import UsuarioCreate
+from src.usuario.repository import create_usuario
+from src.usuario.schema import UsuarioCreate
 
 def test_create_usuario_senha_curta():
     user_data = UsuarioCreate(

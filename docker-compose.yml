@@ -18,9 +18,9 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./app:/code/app #live sync
+      - ./src:/code/src #live sync
     environment:
       - DATABASE_URL=postgresql://medpark_user:medpark_password@db/medpark_db
     depends_on:
       - db
-    command: sh -c "pytest && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    command: sh -c "pytest && uvicorn src.main:app --host 0.0.0.0 --port 8000"
