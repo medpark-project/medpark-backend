@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from src.db.session import engine, Base
-from src.tipo_veiculo.routers import router as tipo_veiculo_router
-from src.usuario.routers import router as usuario_router
+from src.tipo_veiculo.router import router as tipo_veiculo_router
+from src.usuario.router import router as usuario_router
 from src.tipo_veiculo import model as tipo_veiculo_model
 from src.usuario import model as usuario_model
 
