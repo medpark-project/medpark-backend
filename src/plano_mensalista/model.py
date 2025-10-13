@@ -7,4 +7,4 @@ class PlanoMensalista(Base):
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String, index=True, unique=True, nullable=False)
     preco_mensal = Column(Float, nullable=False)
-    descricao = Column(String, nullable=True)
+    descricao = Column(String, nullable=False)

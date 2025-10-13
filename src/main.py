@@ -1,10 +1,14 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
+
 from src.db.session import engine, Base
 from src.tipo_veiculo.router import router as tipo_veiculo_router
 from src.usuario.router import router as usuario_router
+from src.plano_mensalista.router import router as plano_router
+
 from src.tipo_veiculo import model as tipo_veiculo_model
 from src.usuario import model as usuario_model
+from src.plano_mensalista import model as plano_model
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -27,6 +31,7 @@ def create_app() -> FastAPI:
 
     app.include_router(tipo_veiculo_router, prefix="/tipos-veiculo", tags=["Tipos de Veículo"])
     app.include_router(usuario_router, prefix="/usuarios", tags=["Usuarios"])
+    app.include_router(plano_router, prefix="/planos-mensalista", tags=["Planos de Mensalista"])
     
     return app
 

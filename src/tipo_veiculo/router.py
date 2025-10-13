@@ -2,8 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from src.tipo_veiculo import schema
-from src.tipo_veiculo import repository
+from src.tipo_veiculo import schema, repository
 from src.db.dependencies import get_db
 
 router = APIRouter()

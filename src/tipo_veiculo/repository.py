@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session
-from src.tipo_veiculo import model
-from src.tipo_veiculo import schema
+from src.tipo_veiculo import model, schema
 
 # READ
 
