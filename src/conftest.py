@@ -11,7 +11,7 @@ from src.db.dependencies import get_db
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
-if DATABASE_URL and 'postgresql' in DATABASE_URL:
+if DATABASE_URL and "postgresql" in DATABASE_URL:
     print("--- Usando Banco de Dados PostgreSQL para testes ---")
     engine = create_engine(DATABASE_URL)
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -25,12 +25,14 @@ else:
     )
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+
 def override_get_db():
     db = TestingSessionLocal()
     try:
         yield db
     finally:
         db.close()
+
 
 @pytest.fixture(scope="function")
 def client():

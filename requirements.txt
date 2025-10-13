@@ -10,3 +10,4 @@ httpx
 passlib[bcrypt]
 python-jose[cryptography]
 bcrypt
+ruff

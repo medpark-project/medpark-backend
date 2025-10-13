@@ -2,19 +2,23 @@ from src.usuario.model import PerfilUsuario
 from pydantic import BaseModel, ConfigDict, EmailStr
 from typing import Optional
 
+
 class UsuarioBase(BaseModel):
     nome: str
     email: EmailStr
     perfil: PerfilUsuario
 
+
 class UsuarioCreate(UsuarioBase):
     senha: str
+
 
 class UsuarioUpdate(BaseModel):
     nome: Optional[str] = None
     email: Optional[EmailStr] = None
     senha: Optional[str] = None
     perfil: Optional[PerfilUsuario] = None
+
 
 class Usuario(UsuarioBase):
     id: int

@@ -33,8 +33,11 @@ def test_read_all_tipos_veiculo(client):
     assert isinstance(data, list)
     assert len(data) >= 2
 
+
 def test_update_tipo_veiculo(client):
-    response_create = client.post("/tipos-veiculo/", json={"nome": "Van", "tarifa_hora": 10.30})
+    response_create = client.post(
+        "/tipos-veiculo/", json={"nome": "Van", "tarifa_hora": 10.30}
+    )
     created_id = response_create.json()["id"]
     update_data = {"nome": "Van Escolar", "tarifa_hora": 15.25}
 
@@ -46,8 +49,11 @@ def test_update_tipo_veiculo(client):
     assert data["tarifa_hora"] == update_data["tarifa_hora"]
     assert data["id"] == created_id
 
+
 def test_delete_tipo_veiculo(client):
-    response_create = client.post("/tipos-veiculo/", json={"nome": "Carro Luxo", "tarifa_hora": 100.0})
+    response_create = client.post(
+        "/tipos-veiculo/", json={"nome": "Carro Luxo", "tarifa_hora": 100.0}
+    )
     created_id = response_create.json()["id"]
     response_delete = client.delete(f"/tipos-veiculo/{created_id}")
 

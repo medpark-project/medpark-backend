@@ -1,0 +1,18 @@
+[tool.ruff]
+line-length = 88
+exclude = [
+    ".git",
+    "__pycache__",
+    "postgres_data",
+    "venv",
+]
+
+[tool.ruff.lint]
+# E: pycodestyle (erros de estilo)
+# W: pycodestyle (avisos de estilo)
+# F: Pyflakes (erros lógicos, como variáveis não usadas)
+# I: isort (organização de imports)
+select = ["E", "W", "F", "I"]
+
+[tool.ruff.format]
+quote-style = "double"
