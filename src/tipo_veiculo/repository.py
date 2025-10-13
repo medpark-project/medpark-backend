@@ -69,8 +69,10 @@ def update_tipo_veiculo(
 
 
 """
-padronizei que as funções de atualização e deleção recebem um objeto e não um id. os endpoints
-serão responsáveis por verificar se o objeto se encontra na base antes de chamar a função
+padronizei que as funções de atualização e 
+deleção recebem um objeto e não um id. os endpoints
+serão responsáveis por verificar se o objeto se 
+encontra na base antes de chamar a função
 """
 
 

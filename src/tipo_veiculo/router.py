@@ -1,7 +1,6 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-
 from src.tipo_veiculo import schema, repository
 from src.db.dependencies import get_db
 
@@ -46,12 +45,6 @@ def update_tipo_veiculo(
     return repository.update_tipo_veiculo(
         db=db, db_tipo_veiculo=db_tipo_veiculo, tipo_veiculo=tipo_veiculo
     )
-
-
-"""
-padronizei que as funções de atualização e deleção recebem um objeto e não um id. os endpoints
-serão responsáveis por verificar se o objeto se encontra na base antes de chamar a função
-"""
 
 
 # DELETE

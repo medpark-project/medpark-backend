@@ -16,3 +16,12 @@ select = ["E", "W", "F", "I"]
 
 [tool.ruff.format]
 quote-style = "double"
+
+# docker compose down
+# docker compose run --rm backend sh -c "sleep 3600" &
+# docker compose exec backend ruff format src
+# docker compose exec backend ruff check src --fix
+# fix docker momentaneo: 
+# sudo docker compose run --rm backend ruff format src
+# checar fix: 
+# sudo docker compose run --rm backend ruff check src
