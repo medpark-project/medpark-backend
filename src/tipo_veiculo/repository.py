@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+
 from src.tipo_veiculo import model, schema
 
 # READ
@@ -69,9 +70,9 @@ def update_tipo_veiculo(
 
 
 """
-padronizei que as funções de atualização e 
+padronizei que as funções de atualização e
 deleção recebem um objeto e não um id. os endpoints
-serão responsáveis por verificar se o objeto se 
+serão responsáveis por verificar se o objeto se
 encontra na base antes de chamar a função
 """
 

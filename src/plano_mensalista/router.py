@@ -1,9 +1,10 @@
 from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from src.plano_mensalista import schema, repository
 from src.db.dependencies import get_db
+from src.plano_mensalista import repository, schema
 
 router = APIRouter()
 

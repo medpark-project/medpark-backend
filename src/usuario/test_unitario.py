@@ -1,7 +1,9 @@
 # app/tests/unit/test_crud_usuario.py
 
-import pytest
 from unittest.mock import MagicMock
+
+import pytest
+
 from src.usuario.repository import create_usuario
 from src.usuario.schema import UsuarioCreate
 

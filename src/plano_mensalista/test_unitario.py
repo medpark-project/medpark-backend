@@ -1,5 +1,7 @@
-import pytest
 from unittest.mock import MagicMock
+
+import pytest
+
 from src.plano_mensalista.repository import create_plano
 from src.plano_mensalista.schema import PlanoMensalistaCreate
 

@@ -1,5 +1,7 @@
-import pytest
 from unittest.mock import MagicMock
+
+import pytest
+
 from src.tipo_veiculo import repository
 from src.tipo_veiculo.schema import TipoVeiculoCreate, TipoVeiculoUpdate
 

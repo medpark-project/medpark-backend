@@ -1,7 +1,7 @@
-from sqlalchemy.orm import Session
 import bcrypt
-from src.usuario import model
-from src.usuario import schema
+from sqlalchemy.orm import Session
+
+from src.usuario import model, schema
 
 
 def get_password_hash(password: str) -> str:

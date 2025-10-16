@@ -1,14 +1,14 @@
-from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from src.db.session import engine, Base
-from src.tipo_veiculo.router import router as tipo_veiculo_router
-from src.usuario.router import router as usuario_router
-from src.plano_mensalista.router import router as plano_router
+from fastapi import FastAPI
 
-from src.tipo_veiculo import model as tipo_veiculo_model  # noqa: F401
-from src.usuario import model as usuario_model  # noqa: F401
+from src.db.session import Base, engine
 from src.plano_mensalista import model as plano_model  # noqa: F401
+from src.plano_mensalista.router import router as plano_router
+from src.tipo_veiculo import model as tipo_veiculo_model  # noqa: F401
+from src.tipo_veiculo.router import router as tipo_veiculo_router
+from src.usuario import model as usuario_model  # noqa: F401
+from src.usuario.router import router as usuario_router
 
 
 @asynccontextmanager

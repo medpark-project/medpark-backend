@@ -1,6 +1,8 @@
-from src.usuario.model import PerfilUsuario
-from pydantic import BaseModel, ConfigDict, EmailStr
 from typing import Optional
+
+from pydantic import BaseModel, ConfigDict, EmailStr
+
+from src.usuario.model import PerfilUsuario
 
 
 class UsuarioBase(BaseModel):
