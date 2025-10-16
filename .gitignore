@@ -15,3 +15,5 @@ __pycache__/
 # SO
 .DS_Store
 Thumbs.db
+
+postgres_data/
