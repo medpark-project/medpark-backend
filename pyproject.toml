@@ -6,7 +6,7 @@ exclude = [
     "postgres_data",
     "venv",
 ]
-
+src = ["src"]
 [tool.ruff.lint]
 # E: pycodestyle (erros de estilo)
 # W: pycodestyle (avisos de estilo)
