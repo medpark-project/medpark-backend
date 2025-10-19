@@ -46,6 +46,6 @@ jobs:
       
       - name: Run tests with Pytest
         env:
-          DATABASE_URL: "postgresql://medpark_user:medpark_password@localhost:5432/medpark_db_test"
+          DATABASE_URL_TEST: "postgresql://medpark_user:medpark_password@localhost:5432/medpark_db_test"
           PYTHONPATH: .
         run: pytest
