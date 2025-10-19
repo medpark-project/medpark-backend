@@ -3,6 +3,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from src.auth_deps import get_current_user  # <-- Importa nossa nova dependência
 from src.db.dependencies import get_db
 from src.tipo_veiculo import repository, schema
 
@@ -12,8 +13,11 @@ router = APIRouter()
 # endpoint CREATE novo tipo_veiculo
 @router.post("/", response_model=schema.TipoVeiculo)
 def create_tipo_veiculo(
-    tipo_veiculo: schema.TipoVeiculoCreate, db: Session = Depends(get_db)
+    tipo_veiculo: schema.TipoVeiculoCreate,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
 ):
+    print(f"Usuário autenticado: {current_user}")
     return repository.create_tipo_veiculo(db=db, tipo_veiculo=tipo_veiculo)
 
 

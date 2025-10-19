@@ -7,8 +7,6 @@ from src.plano_mensalista import model as plano_model  # noqa: F401
 from src.plano_mensalista.router import router as plano_router
 from src.tipo_veiculo import model as tipo_veiculo_model  # noqa: F401
 from src.tipo_veiculo.router import router as tipo_veiculo_router
-from src.usuario import model as usuario_model  # noqa: F401
-from src.usuario.router import router as usuario_router
 
 
 @asynccontextmanager
@@ -34,7 +32,6 @@ def create_app() -> FastAPI:
     app.include_router(
         tipo_veiculo_router, prefix="/tipos-veiculo", tags=["Tipos de Veículo"]
     )
-    app.include_router(usuario_router, prefix="/usuarios", tags=["Usuarios"])
     app.include_router(
         plano_router, prefix="/planos-mensalista", tags=["Planos de Mensalista"]
     )
