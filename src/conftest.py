@@ -11,11 +11,11 @@ from src.db.dependencies import get_db
 from src.db.session import Base
 from src.main import create_app
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
+TEST_DATABASE_URL = os.environ.get("DATABASE_URL_TEST")
 
-if DATABASE_URL and "postgresql" in DATABASE_URL:
+if TEST_DATABASE_URL:
     print("--- Usando Banco de Dados PostgreSQL para testes ---")
-    engine = create_engine(DATABASE_URL)
+    engine = create_engine(TEST_DATABASE_URL)
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 else:
     print("--- Usando Banco de Dados SQLite em memória para testes ---")
