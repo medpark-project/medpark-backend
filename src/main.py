@@ -5,6 +5,10 @@ from fastapi import FastAPI
 from src.db.session import Base, engine
 from src.plano_mensalista import model as plano_model  # noqa: F401
 from src.plano_mensalista.router import router as plano_router
+from src.solicitacao_mensalista import (
+    model as solicitacao_mensalista_model,  # noqa: F401
+)
+from src.solicitacao_mensalista.router import router as solicitacao_router
 from src.tipo_veiculo import model as tipo_veiculo_model  # noqa: F401
 from src.tipo_veiculo.router import router as tipo_veiculo_router
 
@@ -32,8 +36,15 @@ def create_app() -> FastAPI:
     app.include_router(
         tipo_veiculo_router, prefix="/tipos-veiculo", tags=["Tipos de Veículo"]
     )
+
     app.include_router(
         plano_router, prefix="/planos-mensalista", tags=["Planos de Mensalista"]
+    )
+
+    app.include_router(
+        solicitacao_router,
+        prefix="/solicitacoes-mensalista",
+        tags=["Solicitações de Mensalista"],
     )
 
     return app
