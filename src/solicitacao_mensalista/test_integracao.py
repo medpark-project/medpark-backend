@@ -22,6 +22,7 @@ def test_create_solicitacao_success(client, authenticated_client):
         "email": "candidato@teste.com",
         "cpf": cpf_generator.generate(),
         "rg": "12.345.678-9",
+        "telefone": "11988887777",
         "placa_veiculo": "BRA2E19",
         "plano_id": plano_id,
     }
@@ -34,6 +35,7 @@ def test_create_solicitacao_success(client, authenticated_client):
     data = response.json()
     assert data["email"] == form_data["email"]
     assert data["status"] == "PENDENTE"
+    assert data["telefone"] == form_data["telefone"]
 
 
 @pytest.mark.parametrize(
@@ -58,6 +60,7 @@ def test_create_solicitacao_validation_errors(
         "email": "candidato@gmail.com",
         "cpf": cpf_generator.generate(),
         "rg": "11.222.333-4",
+        "telefone": "11977776666",
         "placa_veiculo": "VAL1D23",
         "plano_id": plano_response.json()["id"],
     }
@@ -71,6 +74,8 @@ def test_create_solicitacao_validation_errors(
         "doc_comprovante": ("comprov.jpg", BytesIO(b"jpg"), "image/jpeg"),
     }
     response = client.post("/solicitacoes-mensalista/", data=valid_data, files=files)
+
+    assert response.status_code in [422, 404]
 
     error_detail = response.json()["detail"]
     if isinstance(error_detail, list):
@@ -93,6 +98,7 @@ def test_create_solicitacao_missing_files(client, authenticated_client):
         "email": "semarquivo@teste.com",
         "cpf": cpf_generator.generate(),
         "rg": "12.345.678-9",
+        "telefone": "11955554444",
         "placa_veiculo": "ARQ-5678",
         "plano_id": plano_response.json()["id"],
     }
@@ -102,6 +108,7 @@ def test_create_solicitacao_missing_files(client, authenticated_client):
 
 
 def test_update_solicitacao_status(client, authenticated_client):
+    """Testa se um usuário autenticado pode aprovar uma solicitação."""
     plano_response = authenticated_client.post(
         "/planos-mensalista/",
         json={"nome": "Plano para Update", "preco_mensal": 100.0, "descricao": "Teste"},
@@ -111,6 +118,7 @@ def test_update_solicitacao_status(client, authenticated_client):
         "email": "aprovar@teste.com",
         "cpf": cpf_generator.generate(),
         "rg": "11.222.333-4",
+        "telefone": "11933332222",
         "placa_veiculo": "APR-1234",
         "plano_id": plano_response.json()["id"],
     }

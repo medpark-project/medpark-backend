@@ -1,7 +1,7 @@
 import shutil
 import uuid
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from fastapi import (
     APIRouter,
@@ -28,6 +28,7 @@ def solicitacao_form(
     email: str = Form(...),
     cpf: str = Form(...),
     rg: str = Form(...),
+    telefone: Optional[str] = Form(None),
     placa_veiculo: str = Form(...),
     plano_id: int = Form(...),
 ) -> schema.SolicitacaoMensalistaCreate:
@@ -37,6 +38,7 @@ def solicitacao_form(
             email=email,
             cpf=cpf,
             rg=rg,
+            telefone=telefone,
             placa_veiculo=placa_veiculo,
             plano_id=plano_id,
         )

@@ -1,7 +1,8 @@
 import re
+from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
-from pydantic_core import PydanticCustomError  # <--- Importa o erro correto
+from pydantic_core import PydanticCustomError
 from validate_docbr import CPF
 
 from .model import StatusSolicitacao
@@ -12,6 +13,7 @@ class SolicitacaoMensalistaBase(BaseModel):
     email: EmailStr
     cpf: str = Field(..., min_length=1)
     rg: str = Field(..., min_length=1)
+    telefone: Optional[str] = None  # Define o campo como opcional
     placa_veiculo: str
     plano_id: int
 

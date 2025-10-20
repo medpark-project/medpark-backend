@@ -14,7 +14,7 @@ def test_create_plano(authenticated_client):
     assert "id" in data
 
 
-def test_read_all_planos(authenticated_client):
+def test_read_all_planos(client, authenticated_client):
     authenticated_client.post(
         "/planos-mensalista/",
         json={"nome": "Plano Teste A", "preco_mensal": 100.0, "descricao": "Desc A"},
@@ -24,15 +24,15 @@ def test_read_all_planos(authenticated_client):
         json={"nome": "Plano Teste B", "preco_mensal": 200.0, "descricao": "Desc B"},
     )
 
-    response = authenticated_client.get("/planos-mensalista/")
+    response = client.get("/planos-mensalista/")
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
     assert len(data) >= 2
 
 
-def test_read_one_plano_not_found(authenticated_client):
-    response = authenticated_client.get("/planos-mensalista/999")
+def test_read_one_plano_not_found(client):
+    response = client.get("/planos-mensalista/999")
     assert response.status_code == 404
     assert "Plano de Mensalista não encontrado" in response.json()["detail"]
 

@@ -1,5 +1,8 @@
 from sqlalchemy.orm import Session
 
+from src.mensalista import repository as mensalista_repo
+from src.mensalista import schema as mensalista_schema
+
 from . import model, schema
 
 
@@ -30,6 +33,7 @@ def create_solicitacao(
         email=solicitacao.email,
         cpf=solicitacao.cpf,
         rg=solicitacao.rg,
+        telefone=solicitacao.telefone,
         placa_veiculo=solicitacao.placa_veiculo,
         plano_id=solicitacao.plano_id,
         path_doc_pessoal=path_doc_pessoal,
@@ -47,10 +51,24 @@ def update_status_solicitacao(
     solicitacao_mensalista: schema.SolicitacaoMensalistaUpdate,
 ) -> model.SolicitacaoMensalista:
     db_solicitacao.status = solicitacao_mensalista.status
-
     db.add(db_solicitacao)
+
+    if solicitacao_mensalista.status == model.StatusSolicitacao.APROVADO:
+        novo_mensalista_data = mensalista_schema.MensalistaCreate(
+            nome_completo=db_solicitacao.nome_completo,
+            email=db_solicitacao.email,
+            cpf=db_solicitacao.cpf,
+            rg=db_solicitacao.rg,
+            telefone=db_solicitacao.telefone,
+            path_doc_pessoal=db_solicitacao.path_doc_pessoal,
+            path_doc_comprovante=db_solicitacao.path_doc_comprovante,
+        )
+
+        mensalista_repo.create_mensalista(db=db, mensalista=novo_mensalista_data)
+
     db.commit()
     db.refresh(db_solicitacao)
+
     return db_solicitacao
 
 

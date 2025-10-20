@@ -3,6 +3,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from src.db.session import Base, engine
+from src.mensalista import model as mensalista_model  # noqa: F401
+from src.mensalista.router import router as mensalista_router
 from src.plano_mensalista import model as plano_model  # noqa: F401
 from src.plano_mensalista.router import router as plano_router
 from src.solicitacao_mensalista import (
@@ -46,6 +48,8 @@ def create_app() -> FastAPI:
         prefix="/solicitacoes-mensalista",
         tags=["Solicitações de Mensalista"],
     )
+
+    app.include_router(mensalista_router, prefix="/mensalistas", tags=["Mensalistas"])
 
     return app
 

@@ -28,7 +28,6 @@ def read_all_planos_mensalista(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
 ):
     return repository.get_all_planos(db, skip=skip, limit=limit)
 
@@ -37,7 +36,6 @@ def read_all_planos_mensalista(
 def read_plano_mensalista(
     plano_mensalista_id: int,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
 ):
     db_plano_mensalista = repository.get_plano(
         db, plano_mensalista_id=plano_mensalista_id
