@@ -1,3 +1,6 @@
+import pytest
+
+
 def test_create_plano(authenticated_client):
     plano_data = {
         "nome": "Plano Básico",
@@ -9,15 +12,6 @@ def test_create_plano(authenticated_client):
     data = response.json()
     assert data["nome"] == plano_data["nome"]
     assert "id" in data
-
-
-def test_create_plano_missing_description_fails(authenticated_client):
-    plano_data_invalido = {"nome": "Plano Inválido", "preco_mensal": 150.0}
-    response = authenticated_client.post(
-        "/planos-mensalista/", json=plano_data_invalido
-    )
-
-    assert response.status_code == 422
 
 
 def test_read_all_planos(authenticated_client):
@@ -76,3 +70,66 @@ def test_delete_plano(authenticated_client):
 
     response_read = authenticated_client.get(f"/planos-mensalista/{created_id}")
     assert response_read.status_code == 404
+
+
+@pytest.mark.parametrize(
+    "invalid_data, expected_status, expected_detail_substring",
+    [
+        ({"preco_mensal": 100.0, "descricao": "Plano sem nome"}, 422, "Field required"),
+        (
+            {"nome": "Plano sem preço", "descricao": "Plano sem preço"},
+            422,
+            "Field required",
+        ),
+        ({"nome": "Plano sem descrição", "preco_mensal": 100.0}, 422, "Field required"),
+        (
+            {
+                "nome": "Plano com preço inválido",
+                "preco_mensal": "cem reais",
+                "descricao": "Teste",
+            },
+            422,
+            "Input should be a valid number",
+        ),
+        (
+            {"nome": 123, "preco_mensal": 100.0, "descricao": "Teste"},
+            422,
+            "Input should be a valid string",
+        ),
+        (
+            {
+                "nome": "Plano com preço negativo",
+                "preco_mensal": -1.0,
+                "descricao": "Teste",
+            },
+            422,
+            "O preço mensal não pode ser negativo",
+        ),
+    ],
+)
+def test_create_plano_validation_errors(
+    authenticated_client, invalid_data, expected_status, expected_detail_substring
+):
+    response = authenticated_client.post("/planos-mensalista/", json=invalid_data)
+
+    assert response.status_code == expected_status
+    assert expected_detail_substring in response.text
+
+
+def test_update_plano_com_preco_negativo(authenticated_client):
+    response_create = authenticated_client.post(
+        "/planos-mensalista/",
+        json={
+            "nome": "Plano para Teste de Update",
+            "preco_mensal": 100.0,
+            "descricao": "Teste",
+        },
+    )
+    created_id = response_create.json()["id"]
+
+    response_update = authenticated_client.put(
+        f"/planos-mensalista/{created_id}", json={"preco_mensal": -50.0}
+    )
+
+    assert response_update.status_code == 422
+    assert "O preço mensal não pode ser negativo" in response_update.text

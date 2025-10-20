@@ -16,6 +16,10 @@ def create_plano_mensalista(
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
+    if plano_mensalista.preco_mensal < 0:
+        raise HTTPException(
+            status_code=422, detail="O preço mensal não pode ser negativo."
+        )
     return repository.create_plano(db=db, plano_mensalista=plano_mensalista)
 
 
@@ -59,11 +63,16 @@ def update_plano_mensalista(
         raise HTTPException(
             status_code=404, detail="Plano de Mensalista não encontrado"
         )
+    if plano_mensalista.preco_mensal is not None and plano_mensalista.preco_mensal < 0:
+        raise HTTPException(
+            status_code=422, detail="O preço mensal não pode ser negativo."
+        )
     updated_plano = repository.update_plano(
         db=db,
         db_plano_mensalista=db_plano_mensalista,
         plano_mensalista=plano_mensalista,
     )
+
     return updated_plano
 
 

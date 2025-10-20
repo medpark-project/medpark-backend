@@ -20,9 +20,6 @@ def get_all_planos(
 def create_plano(
     db: Session, plano_mensalista: schema.PlanoMensalistaCreate
 ) -> model.PlanoMensalista:
-    if plano_mensalista.preco_mensal < 0:
-        raise ValueError("O preço mensal não pode ser negativo.")
-
     db_plano_mensalista = model.PlanoMensalista(
         nome=plano_mensalista.nome,
         preco_mensal=plano_mensalista.preco_mensal,
@@ -40,9 +37,6 @@ def update_plano(
     plano_mensalista: schema.PlanoMensalistaUpdate,
 ) -> model.PlanoMensalista:
     update_data = plano_mensalista.model_dump(exclude_unset=True)
-
-    if ("preco_mensal" in update_data) and update_data["preco_mensal"] < 0:
-        raise ValueError("O preço mensal não pode ser negativo.")
 
     for key, value in update_data.items():
         setattr(db_plano_mensalista, key, value)
