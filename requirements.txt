@@ -11,3 +11,5 @@ python-jose[cryptography]
 ruff
 python-multipart
 validate-docbr
+bcrypt
+passlib[bcrypt]
