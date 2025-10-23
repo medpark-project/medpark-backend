@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 
 from src.db.session import Base
 
@@ -14,3 +15,4 @@ class Mensalista(Base):
     telefone = Column(String, nullable=True)
     path_doc_pessoal = Column(String, nullable=False)
     path_doc_comprovante = Column(String, nullable=False)
+    veiculo = relationship("Veiculo", back_populates="dono", uselist=False)

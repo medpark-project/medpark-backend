@@ -1,6 +1,8 @@
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
+from pydantic_core import PydanticCustomError
+from validate_docbr import CPF
 
 
 class MensalistaBase(BaseModel):
@@ -11,6 +13,15 @@ class MensalistaBase(BaseModel):
     telefone: Optional[str] = None
     path_doc_pessoal: str
     path_doc_comprovante: str
+
+    @field_validator("cpf")
+    def validate_cpf(cls, v):
+        if not v:
+            return v
+        cpf_validator = CPF()
+        if not cpf_validator.validate(v):
+            raise PydanticCustomError("value_error", "CPF inválido.")
+        return v
 
 
 class MensalistaCreate(MensalistaBase):

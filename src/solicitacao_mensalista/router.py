@@ -17,6 +17,8 @@ from sqlalchemy.orm import Session
 from src.auth_deps import get_current_user
 from src.db.dependencies import get_db
 from src.plano_mensalista import repository as plano_repo
+from src.tipo_veiculo import repository as tipo_veiculo_repo
+from src.veiculo import repository as veiculo_repo
 
 from . import repository, schema
 
@@ -31,6 +33,7 @@ def solicitacao_form(
     telefone: Optional[str] = Form(None),
     placa_veiculo: str = Form(...),
     plano_id: int = Form(...),
+    tipo_veiculo_id: int = Form(...),
 ) -> schema.SolicitacaoMensalistaCreate:
     try:
         return schema.SolicitacaoMensalistaCreate(
@@ -41,6 +44,7 @@ def solicitacao_form(
             telefone=telefone,
             placa_veiculo=placa_veiculo,
             plano_id=plano_id,
+            tipo_veiculo_id=tipo_veiculo_id,
         )
     except ValidationError as e:
         raise HTTPException(status_code=422, detail=e.errors())
@@ -64,6 +68,26 @@ def create_solicitacao(
             detail=(
                 f"Plano de ID {solicitacao_mensalista.plano_id} não foi encontrado."
             ),
+        )
+
+    tipo_veiculo_existente = tipo_veiculo_repo.get_tipo_veiculo(
+        db, tipo_veiculo_id=solicitacao_mensalista.tipo_veiculo_id
+    )
+    if not tipo_veiculo_existente:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Tipo de Veículo com ID {solicitacao_mensalista.tipo_veiculo_id} "
+            f"não encontrado.",
+        )
+
+    veiculo_existente = veiculo_repo.get_veiculo_by_placa(
+        db, placa=solicitacao_mensalista.placa_veiculo
+    )
+    if veiculo_existente and veiculo_existente.mensalista_id is not None:
+        raise HTTPException(
+            status_code=409,
+            detail=f"A placa {solicitacao_mensalista.placa_veiculo} "
+            f"já está cadastrada para outro mensalista.",
         )
 
     upload_dir = Path("uploads/solicitacoes")

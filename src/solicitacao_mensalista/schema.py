@@ -16,6 +16,7 @@ class SolicitacaoMensalistaBase(BaseModel):
     telefone: Optional[str] = None  # Define o campo como opcional
     placa_veiculo: str
     plano_id: int
+    tipo_veiculo_id: int
 
     @field_validator("cpf")
     def validate_cpf(cls, v):

@@ -2,6 +2,8 @@ from sqlalchemy.orm import Session
 
 from src.mensalista import repository as mensalista_repo
 from src.mensalista import schema as mensalista_schema
+from src.veiculo import repository as veiculo_repo
+from src.veiculo import schema as veiculo_schema
 
 from . import model, schema
 
@@ -36,6 +38,7 @@ def create_solicitacao(
         telefone=solicitacao.telefone,
         placa_veiculo=solicitacao.placa_veiculo,
         plano_id=solicitacao.plano_id,
+        tipo_veiculo_id=solicitacao.tipo_veiculo_id,
         path_doc_pessoal=path_doc_pessoal,
         path_doc_comprovante=path_doc_comprovante,
     )
@@ -64,7 +67,25 @@ def update_status_solicitacao(
             path_doc_comprovante=db_solicitacao.path_doc_comprovante,
         )
 
-        mensalista_repo.create_mensalista(db=db, mensalista=novo_mensalista_data)
+        novo_mensalista = mensalista_repo.create_mensalista(
+            db=db, mensalista=novo_mensalista_data
+        )
+
+        veiculo_existente = veiculo_repo.get_veiculo_by_placa(
+            db, placa=db_solicitacao.placa_veiculo
+        )
+
+        if veiculo_existente:
+            veiculo_repo.assign_mensalista_to_veiculo(
+                db, db_veiculo=veiculo_existente, mensalista_id=novo_mensalista.id
+            )
+        else:
+            novo_veiculo_data = veiculo_schema.VeiculoCreate(
+                placa=db_solicitacao.placa_veiculo,
+                tipo_veiculo_id=db_solicitacao.tipo_veiculo_id,
+                mensalista_id=novo_mensalista.id,
+            )
+            veiculo_repo.create_veiculo(db=db, veiculo=novo_veiculo_data)
 
     db.commit()
     db.refresh(db_solicitacao)

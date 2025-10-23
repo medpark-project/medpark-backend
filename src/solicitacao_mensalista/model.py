@@ -39,3 +39,4 @@ class SolicitacaoMensalista(Base):
     )
 
     plano_id = Column(Integer, ForeignKey("planos_mensalista.id"), nullable=False)
+    tipo_veiculo_id = Column(Integer, ForeignKey("tipos_veiculo.id"), nullable=False)
