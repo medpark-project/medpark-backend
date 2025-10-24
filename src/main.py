@@ -2,11 +2,19 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from src.assinatura_plano import model as assinatura_plano_model  # noqa: F401
+from src.assinatura_plano.router import router as assinatura_plano_router
 from src.db.session import Base, engine
 from src.mensalista import model as mensalista_model  # noqa: F401
 from src.mensalista.router import router as mensalista_router
+from src.pagamento_mensalidade import model as pagamento_mensalidade_model  # noqa: F401
+from src.pagamento_mensalidade.router import router as pagamento_mensalidade_router
 from src.plano_mensalista import model as plano_model  # noqa: F401
 from src.plano_mensalista.router import router as plano_router
+from src.registro_estacionamento import (
+    model as registro_estacionamento_model,  # noqa: F401
+)
+from src.registro_estacionamento.router import router as registro_estacionamento_router
 from src.solicitacao_mensalista import (
     model as solicitacao_mensalista_model,  # noqa: F401
 )
@@ -58,6 +66,22 @@ def create_app() -> FastAPI:
     app.include_router(usuario_router, prefix="/usuarios", tags=["Usuarios"])
 
     app.include_router(veiculo_router, prefix="/veiculos", tags=["Veículos "])
+
+    app.include_router(
+        assinatura_plano_router, prefix="/assinaturas", tags=["Assinaturas de Plano"]
+    )
+
+    app.include_router(
+        pagamento_mensalidade_router,
+        prefix="/pagamentos",
+        tags=["Pagamentos de Mensalidade"],
+    )
+
+    app.include_router(
+        registro_estacionamento_router,
+        prefix="/estacionamento",
+        tags=["Registro de Estacionamento"],
+    )
 
     return app
 

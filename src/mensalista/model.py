@@ -16,3 +16,4 @@ class Mensalista(Base):
     path_doc_pessoal = Column(String, nullable=False)
     path_doc_comprovante = Column(String, nullable=False)
     veiculo = relationship("Veiculo", back_populates="dono", uselist=False)
+    assinaturas = relationship("AssinaturaPlano", back_populates="mensalista")
