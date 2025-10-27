@@ -1,14 +1,18 @@
 from datetime import datetime, timedelta, timezone
-from jose import JWTError, jwt
+
 import bcrypt
+from jose import jwt
 from pydantic import BaseModel
+
 
 class Token(BaseModel):
     access_token: str
     token_type: str
 
+
 class TokenData(BaseModel):
     email: str | None = None
+
 
 SECRET_KEY = "sua-chave-secreta-super-dificil-de-adivinhar"
 ALGORITHM = "HS256"
@@ -21,6 +25,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return bcrypt.checkpw(
         password=password_bytes, hashed_password=hashed_password_bytes
     )
+
 
 def create_access_token(data: dict) -> str:
     to_encode = data.copy()
