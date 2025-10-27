@@ -1,5 +1,9 @@
+from datetime import date
+
 from sqlalchemy.orm import Session
 
+from src.assinatura_plano import repository as assinatura_repo
+from src.assinatura_plano import schema as assinatura_schema
 from src.mensalista import repository as mensalista_repo
 from src.mensalista import schema as mensalista_schema
 from src.veiculo import repository as veiculo_repo
@@ -86,6 +90,13 @@ def update_status_solicitacao(
                 mensalista_id=novo_mensalista.id,
             )
             veiculo_repo.create_veiculo(db=db, veiculo=novo_veiculo_data)
+
+        nova_assinatura_data = assinatura_schema.AssinaturaPlanoCreate(
+            mensalista_id=novo_mensalista.id,
+            plano_id=db_solicitacao.plano_id,
+            data_inicio=date.today(),  # A assinatura começa no dia da aprovação
+        )
+        assinatura_repo.create_assinatura(db=db, assinatura=nova_assinatura_data)
 
     db.commit()
     db.refresh(db_solicitacao)
