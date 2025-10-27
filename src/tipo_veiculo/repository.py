@@ -28,9 +28,6 @@ def get_tipos_veiculo(
 def create_tipo_veiculo(
     db: Session, tipo_veiculo: schema.TipoVeiculoCreate
 ) -> model.TipoVeiculo:
-    if tipo_veiculo.tarifa_hora < 0:
-        raise ValueError("A tarifa por hora não pode ser negativa.")
-
     # cria um modelo sqlalchemy a partir dos dados recebidos no schema pydantic
     # **tipo_veiculo.model_dump() traduz o schema num formato que o SQLAlchemy entende
     db_tipo_veiculo = model.TipoVeiculo(**tipo_veiculo.model_dump())
@@ -55,9 +52,6 @@ def update_tipo_veiculo(
 ) -> model.TipoVeiculo:
     # pega dados do schema e converte em dicionario
     update_data = tipo_veiculo.model_dump(exclude_unset=True)
-
-    if ("tarifa_hora" in update_data) and update_data["tarifa_hora"] < 0:
-        raise ValueError("A tarifa por hora não pode ser negativa.")
 
     # itera sobre os dados e atualiza os campos
     for key, value in update_data.items():

@@ -17,6 +17,10 @@ def create_tipo_veiculo(
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
+    if tipo_veiculo.tarifa_hora < 0:
+        raise HTTPException(
+            status_code=422, detail="A tarifa por hora não pode ser negativa."
+        )
     print(f"Usuário autenticado: {current_user}")
     return repository.create_tipo_veiculo(db=db, tipo_veiculo=tipo_veiculo)
 
@@ -27,9 +31,7 @@ def read_tipos_veiculo(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
 ):
-    print(f"Usuário autenticado: {current_user}")
     tipos_veiculo = repository.get_tipos_veiculo(db, skip=skip, limit=limit)
     return tipos_veiculo
 
@@ -39,12 +41,10 @@ def read_tipos_veiculo(
 def read_tipo_veiculo(
     tipo_veiculo_id: int,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
 ):
     db_tipo_veiculo = repository.get_tipo_veiculo(db, tipo_veiculo_id=tipo_veiculo_id)
     if db_tipo_veiculo is None:
         raise HTTPException(status_code=404, detail="Tipo de Veículo não encontrado.")
-    print(f"Usuário autenticado: {current_user}")
     return db_tipo_veiculo
 
 
@@ -56,6 +56,10 @@ def update_tipo_veiculo(
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
+    if tipo_veiculo.tarifa_hora is not None and tipo_veiculo.tarifa_hora < 0:
+        raise HTTPException(
+            status_code=422, detail="A tarifa por hora não pode ser negativa."
+        )
     db_tipo_veiculo = repository.get_tipo_veiculo(db, tipo_veiculo_id=tipo_veiculo_id)
     if db_tipo_veiculo is None:
         raise HTTPException(status_code=404, detail="Tipo de Veiculo não encontrado.")
