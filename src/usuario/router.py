@@ -73,3 +73,18 @@ def delete_usuario(usuario_id: int, db: Session = Depends(get_db)):
     if db_usuario is None:
         raise HTTPException(status_code=404, detail="Usuário não encontrado.")
     return repository.delete_usuario(db=db, db_usuario=db_usuario)
+
+
+# endpoint interno autenticacao
+@router.post("/auth/validate", include_in_schema=False)
+def validate_user_for_auth_service(
+    db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()
+):
+    user = repository.get_usuario_by_email(db, email=form_data.username)
+
+    if not user or not security.verify_password(form_data.password, user.senha_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="E-mail ou senha incorretos",
+        )
+    return {"email": user.email, "profile": user.perfil.value, "nome": user.nome}
