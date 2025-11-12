@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from src.assinatura_plano import model as assinatura_plano_model  # noqa: F401
 from src.assinatura_plano.router import router as assinatura_plano_router
@@ -41,6 +42,20 @@ def create_app() -> FastAPI:
         version="0.1.0",
         description="API para o sistema de gerenciamento de estacionamento MedPark.",
         lifespan=lifespan,
+    )
+
+    origins = [
+        "http://localhost",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ]
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
 
     @app.get("/")
