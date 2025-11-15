@@ -15,6 +15,8 @@ class SolicitacaoMensalistaBase(BaseModel):
     rg: str = Field(..., min_length=1)
     telefone: Optional[str] = None  # Define o campo como opcional
     placa_veiculo: str
+    modelo_veiculo: Optional[str] = None
+    cor_veiculo: Optional[str] = None
     plano_id: int
     tipo_veiculo_id: int
 

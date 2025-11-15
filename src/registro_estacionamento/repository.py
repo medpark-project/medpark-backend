@@ -40,12 +40,10 @@ def get_all_registros_ativos(db: Session) -> list[model.RegistroEstacionamento]:
 
 
 def update_registro_saida(
-    db: Session,
-    db_registro: model.RegistroEstacionamento,
-    registro_in: schema.RegistroEstacionamentoUpdate,
+    db: Session, db_registro: model.RegistroEstacionamento, valor_pago: float
 ) -> model.RegistroEstacionamento:
     db_registro.hora_saida = datetime.now()
-    db_registro.valor_pago = registro_in.valor_pago
+    db_registro.valor_pago = valor_pago
 
     db.add(db_registro)
     db.commit()

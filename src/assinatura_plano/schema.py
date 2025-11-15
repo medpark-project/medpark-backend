@@ -3,6 +3,8 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict
 
+from src.plano_mensalista.schema import PlanoMensalista
+
 from .model import StatusAssinatura
 
 
@@ -27,5 +29,5 @@ class AssinaturaPlanoUpdate(BaseModel):
 
 class AssinaturaPlano(AssinaturaPlanoBase):
     id: int
-
+    plano: PlanoMensalista
     model_config = ConfigDict(from_attributes=True)

@@ -21,6 +21,13 @@ def create_tipo_veiculo(
         raise HTTPException(
             status_code=422, detail="A tarifa por hora não pode ser negativa."
         )
+    db_tipo_veiculo_existente = repository.get_tipo_veiculo_by_nome(
+        db, nome=tipo_veiculo.nome
+    )
+    if db_tipo_veiculo_existente:
+        raise HTTPException(
+            status_code=409, detail="Um tipo de veículo com este nome já existe."
+        )
     print(f"Usuário autenticado: {current_user}")
     return repository.create_tipo_veiculo(db=db, tipo_veiculo=tipo_veiculo)
 

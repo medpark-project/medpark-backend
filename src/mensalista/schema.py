@@ -4,6 +4,9 @@ from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
 from pydantic_core import PydanticCustomError
 from validate_docbr import CPF
 
+from src.assinatura_plano.schema import AssinaturaPlano
+from src.veiculo.schema import Veiculo
+
 
 class MensalistaBase(BaseModel):
     nome_completo: str
@@ -36,5 +39,6 @@ class MensalistaUpdate(BaseModel):
 
 class Mensalista(MensalistaBase):
     id: int
-
+    veiculo: Optional[Veiculo] = None
+    assinatura: Optional[AssinaturaPlano] = None
     model_config = ConfigDict(from_attributes=True)

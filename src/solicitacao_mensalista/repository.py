@@ -45,6 +45,8 @@ def create_solicitacao(
         tipo_veiculo_id=solicitacao.tipo_veiculo_id,
         path_doc_pessoal=path_doc_pessoal,
         path_doc_comprovante=path_doc_comprovante,
+        modelo_veiculo=solicitacao.modelo_veiculo,
+        cor_veiculo=solicitacao.cor_veiculo,
     )
     db.add(db_solicitacao)
     db.commit()
@@ -88,6 +90,8 @@ def update_status_solicitacao(
                 placa=db_solicitacao.placa_veiculo,
                 tipo_veiculo_id=db_solicitacao.tipo_veiculo_id,
                 mensalista_id=novo_mensalista.id,
+                modelo=db_solicitacao.modelo_veiculo,  # <-- Adiciona o modelo
+                cor=db_solicitacao.cor_veiculo,
             )
             veiculo_repo.create_veiculo(db=db, veiculo=novo_veiculo_data)
 

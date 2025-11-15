@@ -32,6 +32,8 @@ def solicitacao_form(
     rg: str = Form(...),
     telefone: Optional[str] = Form(None),
     placa_veiculo: str = Form(...),
+    modelo_veiculo: Optional[str] = Form(None),
+    cor_veiculo: Optional[str] = Form(None),
     plano_id: int = Form(...),
     tipo_veiculo_id: int = Form(...),
 ) -> schema.SolicitacaoMensalistaCreate:
@@ -44,6 +46,8 @@ def solicitacao_form(
             telefone=telefone,
             placa_veiculo=placa_veiculo,
             plano_id=plano_id,
+            modelo_veiculo=modelo_veiculo,
+            cor_veiculo=cor_veiculo,
             tipo_veiculo_id=tipo_veiculo_id,
         )
     except ValidationError as e:

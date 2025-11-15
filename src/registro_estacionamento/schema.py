@@ -1,5 +1,3 @@
-# src/registro_estacionamento/schema.py
-
 from datetime import datetime
 from typing import Optional
 
@@ -15,10 +13,11 @@ class RegistroEstacionamentoBase(BaseModel):
 
 class RegistroEstacionamentoCreate(BaseModel):
     veiculo_placa: str
+    tipo_veiculo_id: Optional[int] = None
 
 
 class RegistroEstacionamentoUpdate(BaseModel):
-    valor_pago: float
+    pass
 
 
 class RegistroEstacionamento(RegistroEstacionamentoBase):

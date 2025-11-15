@@ -29,6 +29,8 @@ class SolicitacaoMensalista(Base):
     rg = Column(String, nullable=False)
     telefone = Column(String, nullable=True)
     placa_veiculo = Column(String, nullable=False)
+    modelo_veiculo = Column(String, nullable=True)
+    cor_veiculo = Column(String, nullable=True)
     path_doc_pessoal = Column(String, nullable=False)
     path_doc_comprovante = Column(String, nullable=False)
 

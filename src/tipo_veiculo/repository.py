@@ -14,6 +14,10 @@ def get_tipo_veiculo(db: Session, tipo_veiculo_id: int) -> model.TipoVeiculo | N
     )
 
 
+def get_tipo_veiculo_by_nome(db: Session, nome: str) -> model.TipoVeiculo | None:
+    return db.query(model.TipoVeiculo).filter(model.TipoVeiculo.nome == nome).first()
+
+
 # skip e limit para paginacao
 # get all tipo_veiculo
 def get_tipos_veiculo(

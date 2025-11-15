@@ -4,12 +4,13 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict, field_validator
 from pydantic_core import PydanticCustomError
 
+from src.tipo_veiculo.schema import TipoVeiculo
+
 
 class VeiculoBase(BaseModel):
     placa: str
     modelo: Optional[str] = None
     cor: Optional[str] = None
-    tipo_veiculo_id: int
 
     @field_validator("placa")  # O nome do campo foi corrigido para "placa"
     def validate_placa(cls, v):
@@ -24,6 +25,7 @@ class VeiculoBase(BaseModel):
 
 class VeiculoCreate(VeiculoBase):
     mensalista_id: Optional[int] = None
+    tipo_veiculo_id: int
 
 
 class VeiculoUpdate(BaseModel):
@@ -33,7 +35,7 @@ class VeiculoUpdate(BaseModel):
 
 class Veiculo(VeiculoBase):
     mensalista_id: Optional[int] = None
-
+    tipo: TipoVeiculo
     model_config = ConfigDict(from_attributes=True)
 
 
