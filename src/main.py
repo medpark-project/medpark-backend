@@ -16,6 +16,7 @@ from src.registro_estacionamento import (
     model as registro_estacionamento_model,  # noqa: F401
 )
 from src.registro_estacionamento.router import router as registro_estacionamento_router
+from src.reports.router import router as reports_router  # <-- ADICIONE AQUI
 from src.solicitacao_mensalista import (
     model as solicitacao_mensalista_model,  # noqa: F401
 )
@@ -97,6 +98,8 @@ def create_app() -> FastAPI:
         prefix="/estacionamento",
         tags=["Registro de Estacionamento"],
     )
+
+    app.include_router(reports_router, prefix="/reports", tags=["Reports"])
 
     return app
 

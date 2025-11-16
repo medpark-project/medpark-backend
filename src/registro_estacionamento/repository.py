@@ -1,6 +1,8 @@
 from datetime import datetime
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
+
+from src.veiculo.model import Veiculo
 
 from . import model, schema
 
@@ -33,6 +35,9 @@ def get_registro_aberto_por_placa(
 def get_all_registros_ativos(db: Session) -> list[model.RegistroEstacionamento]:
     return (
         db.query(model.RegistroEstacionamento)
+        .options(
+            joinedload(model.RegistroEstacionamento.veiculo).joinedload(Veiculo.tipo)
+        )
         .filter(model.RegistroEstacionamento.hora_saida.is_(None))
         .order_by(model.RegistroEstacionamento.hora_entrada.asc())
         .all()

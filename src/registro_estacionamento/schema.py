@@ -3,6 +3,8 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict
 
+from src.veiculo.schema import Veiculo
+
 
 class RegistroEstacionamentoBase(BaseModel):
     hora_entrada: datetime
@@ -17,10 +19,10 @@ class RegistroEstacionamentoCreate(BaseModel):
 
 
 class RegistroEstacionamentoUpdate(BaseModel):
-    pass
+    valor_pago: float
 
 
 class RegistroEstacionamento(RegistroEstacionamentoBase):
     id: int
-
+    veiculo: Veiculo
     model_config = ConfigDict(from_attributes=True)

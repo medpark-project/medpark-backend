@@ -1,3 +1,5 @@
+from datetime import date
+
 from sqlalchemy.orm import Session
 
 from . import model, schema
@@ -55,6 +57,14 @@ def update_assinatura(
     assinatura_in: schema.AssinaturaPlanoUpdate,
 ) -> model.AssinaturaPlano:
     update_data = assinatura_in.model_dump(exclude_unset=True)
+
+    if "status" in update_data and update_data["status"] in (
+        model.StatusAssinatura.INATIVA,
+        model.StatusAssinatura.CANCELADA,
+    ):
+        if "data_fim" not in update_data:
+            update_data["data_fim"] = date.today()
+
     for key, value in update_data.items():
         setattr(db_assinatura, key, value)
 

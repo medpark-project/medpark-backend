@@ -12,7 +12,6 @@ def setup_default_tipo_veiculo(authenticated_client):
 
 def test_entrada_e_saida_de_veiculo_avulso_flow(authenticated_client):
     placa_veiculo_avulso = "AVU1B34"
-
     response_entrada = authenticated_client.post(
         "/estacionamento/entrada",
         json={"veiculo_placa": placa_veiculo_avulso, "tipo_veiculo_id": 1},
@@ -25,13 +24,15 @@ def test_entrada_e_saida_de_veiculo_avulso_flow(authenticated_client):
     veiculos_no_patio = response_ativos.json()
     assert any(v["veiculo_placa"] == placa_veiculo_avulso for v in veiculos_no_patio)
 
+    valor_do_pagamento = 10.0
     response_saida = authenticated_client.put(
-        f"/estacionamento/saida/{placa_veiculo_avulso}"
+        f"/estacionamento/saida/{placa_veiculo_avulso}",
+        json={"valor_pago": valor_do_pagamento},
     )
     assert response_saida.status_code == 200, response_saida.text
     data_saida = response_saida.json()
     assert data_saida["hora_saida"] is not None
-    assert data_saida["valor_pago"] >= 10.0
+    assert data_saida["valor_pago"] == valor_do_pagamento
 
 
 def test_entrada_veiculo_ja_estacionado_falha(authenticated_client):
@@ -52,6 +53,8 @@ def test_entrada_veiculo_ja_estacionado_falha(authenticated_client):
 def test_saida_veiculo_nao_encontrado_falha(authenticated_client):
     placa = "FNT1B34"
 
-    response = authenticated_client.put(f"/estacionamento/saida/{placa}")
+    response = authenticated_client.put(
+        f"/estacionamento/saida/{placa}", json={"valor_pago": 10.0}
+    )
     assert response.status_code == 404
     assert "Nenhum registro de entrada ativo encontrado" in response.json()["detail"]
