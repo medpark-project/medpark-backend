@@ -1,11 +1,22 @@
 from sqlalchemy.orm import Session
 
+from src.veiculo.model import Veiculo
+
 from . import model, schema
 
 
 def get_mensalista(db: Session, mensalista_id: int) -> model.Mensalista | None:
     return (
         db.query(model.Mensalista).filter(model.Mensalista.id == mensalista_id).first()
+    )
+
+
+def get_mensalista_by_placa(db: Session, placa: str) -> model.Mensalista | None:
+    return (
+        db.query(model.Mensalista)
+        .join(model.Mensalista.veiculo)
+        .filter(Veiculo.placa == placa)
+        .first()
     )
 
 

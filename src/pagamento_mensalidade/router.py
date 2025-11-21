@@ -56,3 +56,38 @@ def update_pagamento(
     return repository.update_pagamento(
         db=db, db_pagamento=db_pagamento, pagamento_in=pagamento_in
     )
+
+
+@router.get("/publico/{pagamento_id}", response_model=schema.PagamentoMensalidade)
+def get_pagamento_publico(
+    pagamento_id: int,
+    db: Session = Depends(get_db),
+):
+    db_pagamento = repository.get_pagamento(db, pagamento_id=pagamento_id)
+    if db_pagamento is None:
+        raise HTTPException(status_code=404, detail="Pagamento não encontrado.")
+    return db_pagamento
+
+
+@router.put("/publico/{pagamento_id}/pagar", response_model=schema.PagamentoMensalidade)
+def pagar_mensalidade_publico(
+    pagamento_id: int,
+    pagamento_in: schema.PagamentoMensalidadeUpdate,
+    db: Session = Depends(get_db),
+):
+    db_pagamento = repository.get_pagamento(db, pagamento_id=pagamento_id)
+    if db_pagamento is None:
+        raise HTTPException(status_code=404, detail="Pagamento não encontrado.")
+
+    return repository.update_pagamento(
+        db=db, db_pagamento=db_pagamento, pagamento_in=pagamento_in
+    )
+
+
+@router.post("/gerar-faturas", status_code=201)
+def gerar_faturas_em_massa(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    qtd = repository.gerar_faturas_mensais(db)
+    return {"message": f"{qtd} novas faturas geradas com sucesso."}

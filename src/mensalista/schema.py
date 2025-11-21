@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
@@ -42,3 +43,12 @@ class Mensalista(MensalistaBase):
     veiculo: Optional[Veiculo] = None
     assinatura: Optional[AssinaturaPlano] = None
     model_config = ConfigDict(from_attributes=True)
+
+
+class MensalistaStatusPublico(BaseModel):
+    nome_completo: str  # Ou apenas o primeiro nome para privacidade
+    plano_nome: str
+    status_assinatura: str
+    fatura_pendente_id: Optional[int] = None
+    valor_pendente: Optional[float] = None
+    data_vencimento: Optional[date] = None

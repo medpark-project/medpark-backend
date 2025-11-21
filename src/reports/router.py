@@ -63,13 +63,6 @@ def get_avg_ticket_month_report(
     return {"average_ticket": repository.get_average_ticket_price_this_month(db)}
 
 
-@router.get("/metrics/transactions-today")
-def get_transactions_today_report(
-    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)
-):
-    return {"transactions_today": repository.get_transactions_today(db)}
-
-
 @router.get(
     "/recent-transactions", response_model=List[registro_schema.RegistroEstacionamento]
 )
@@ -78,3 +71,11 @@ def get_recent_transactions_report(
     current_user: dict = Depends(get_current_user),
 ):
     return repository.get_recent_transactions(db)
+
+
+@router.get("/financial-history")
+def get_financial_history(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    return repository.get_financial_transactions(db)

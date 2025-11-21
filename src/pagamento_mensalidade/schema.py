@@ -29,5 +29,5 @@ class PagamentoMensalidadeUpdate(BaseModel):
 
 class PagamentoMensalidade(PagamentoMensalidadeBase):
     id: int
-
+    valor_cobranca: float
     model_config = ConfigDict(from_attributes=True)

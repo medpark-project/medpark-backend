@@ -1,12 +1,13 @@
 from datetime import datetime, timedelta
 
 from sqlalchemy import Date, cast, extract, func
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
+from src.assinatura_plano.model import AssinaturaPlano
 from src.pagamento_mensalidade.model import PagamentoMensalidade, StatusPagamento
 from src.registro_estacionamento.model import RegistroEstacionamento
 
 FUSO_HORARIO_LOCAL = "America/Sao_Paulo"
-FUSO_HORARIO_DB = "UTC"  # Nosso banco de dados salva em UTC
+FUSO_HORARIO_DB = "UTC"
 
 
 def _get_local_time(column):
@@ -16,7 +17,6 @@ def _get_local_time(column):
 
 
 def get_total_revenue_this_month(db: Session) -> float:
-    """Calcula a receita total (avulsos + mensalistas) deste mês."""
     hoje = datetime.now()
     inicio_do_mes = hoje.replace(day=1, hour=0, minute=0, second=0)
 
@@ -44,7 +44,6 @@ def get_total_revenue_this_month(db: Session) -> float:
 
 
 def get_average_ticket_price_this_month(db: Session) -> float:
-    """Calcula o ticket médio apenas de veículos avulsos deste mês."""
     hoje = datetime.now()
     inicio_do_mes = hoje.replace(day=1, hour=0, minute=0, second=0)
 
@@ -57,40 +56,16 @@ def get_average_ticket_price_this_month(db: Session) -> float:
     return float(media)
 
 
-def get_transactions_today(db: Session) -> int:
-    """Conta o total de transações de saída (avulsos) de hoje."""
-    hoje_inicio = datetime.now().replace(hour=0, minute=0, second=0)
-
-    # Converte a hora_saida (UTC) para o fuso local ANTES de filtrar
-    local_hora_saida = _get_local_time(RegistroEstacionamento.hora_saida)
-
-    count = (
-        db.query(func.count(RegistroEstacionamento.id))
-        .filter(
-            cast(local_hora_saida, Date) == hoje_inicio.date(),
-            RegistroEstacionamento.valor_pago > 0,
-        )
-        .scalar()
-        or 0
-    )
-
-    return count
-
-
 def get_recent_transactions(db: Session) -> list[RegistroEstacionamento]:
-    """Busca as 5 transações de saída mais recentes."""
     return (
         db.query(RegistroEstacionamento)
-        .filter(RegistroEstacionamento.hora_saida is not None)
-        .order_by(RegistroEstacionamento.hora_saida.desc())
-        .limit(5)
+        .options(joinedload(RegistroEstacionamento.veiculo))
+        .order_by(RegistroEstacionamento.hora_entrada.desc())
+        .limit(10)
     ).all()
 
 
 def get_revenue_breakdown(db: Session):
-    """Retorna o faturamento total dividido entre Avulso e Mensalista."""
-
-    # 1. Total Avulso (dos registros de estacionamento)
     total_avulso = (
         db.query(func.sum(RegistroEstacionamento.valor_pago))
         .filter(RegistroEstacionamento.valor_pago > 0)
@@ -98,7 +73,6 @@ def get_revenue_breakdown(db: Session):
         or 0
     )
 
-    # 2. Total Mensalista (dos pagamentos de mensalidade)
     total_mensalista = (
         db.query(func.sum(PagamentoMensalidade.valor_pago))
         .filter(PagamentoMensalidade.status == StatusPagamento.PAGO)
@@ -142,10 +116,8 @@ def get_avg_stay_time(db: Session) -> str:
 
 
 def get_revenue_last_7_days(db: Session):
-    """Calcula a receita total por dia dos últimos 7 dias, no fuso horário local."""
     sete_dias_atras = datetime.now() - timedelta(days=7)
 
-    # --- CORREÇÃO AQUI ---
     local_hora_saida = _get_local_time(RegistroEstacionamento.hora_saida)
     registros = (
         db.query(
@@ -159,7 +131,6 @@ def get_revenue_last_7_days(db: Session):
         .group_by(cast(local_hora_saida, Date))
     ).all()
 
-    # --- CORREÇÃO AQUI ---
     local_data_pagamento = _get_local_time(PagamentoMensalidade.data_pagamento)
     mensalidades = (
         db.query(
@@ -207,3 +178,64 @@ def get_entries_by_hour(db: Session):
 
     # Formata para o gráfico
     return [{"hour": f"{int(h):02d}:00", "vehicles": t} for h, t in registros]
+
+
+def get_financial_transactions(db: Session, limit: int = 20):
+    avulsos = (
+        db.query(RegistroEstacionamento)
+        .options(joinedload(RegistroEstacionamento.veiculo))
+        .filter(RegistroEstacionamento.valor_pago > 0)
+        .filter(RegistroEstacionamento.hora_saida is not None)
+        .order_by(RegistroEstacionamento.hora_saida.desc())
+        .limit(limit)
+    ).all()
+
+    mensalidades = (
+        db.query(PagamentoMensalidade)
+        .options(
+            joinedload(PagamentoMensalidade.assinatura).joinedload(
+                AssinaturaPlano.mensalista
+            )
+        )
+        .filter(PagamentoMensalidade.status == StatusPagamento.PAGO)
+        .order_by(PagamentoMensalidade.data_pagamento.desc())
+        .limit(limit)
+    ).all()
+
+    lista_unificada = []
+
+    for a in avulsos:
+        lista_unificada.append(
+            {
+                "id": f"avulso-{a.id}",
+                "data": a.hora_saida,  # DateTime
+                "descricao": f"Ticket Avulso - {a.veiculo_placa}",
+                "tipo": "Casual",
+                "valor": float(a.valor_pago),
+                "placa": a.veiculo_placa,
+            }
+        )
+
+    for m in mensalidades:
+        data_formatada = datetime.combine(
+            m.data_pagamento, datetime.min.time().replace(hour=12)
+        )
+        nome_mensalista = (
+            m.assinatura.mensalista.nome_completo
+            if m.assinatura and m.assinatura.mensalista
+            else "Desconhecido"
+        )
+
+        lista_unificada.append(
+            {
+                "id": f"mensal-{m.id}",
+                "data": data_formatada,
+                "descricao": f"Mensalidade - {nome_mensalista}",
+                "tipo": "Monthly",
+                "valor": float(m.valor_pago or 0),
+            }
+        )
+
+    lista_unificada.sort(key=lambda x: x["data"], reverse=True)
+
+    return lista_unificada[:limit]

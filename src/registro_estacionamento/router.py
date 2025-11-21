@@ -65,7 +65,6 @@ def registrar_entrada(
 def calcular_saida(
     placa: str,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
 ):
     db_registro = repository.get_registro_aberto_por_placa(db, veiculo_placa=placa)
     if db_registro is None:
@@ -73,7 +72,7 @@ def calcular_saida(
             status_code=404, detail="Nenhum registro de entrada ativo encontrado."
         )
 
-    hora_saida_calculada = datetime.now()  # Define a hora de saída ANTES do IF
+    hora_saida_calculada = datetime.now()
     db_veiculo = veiculo_repo.get_veiculo_by_placa(db, placa=placa)
 
     if not db_veiculo:
@@ -113,23 +112,15 @@ def calcular_saida(
 @router.put("/saida/{placa}", response_model=schema.RegistroEstacionamento)
 def registrar_saida(
     placa: str,
-    # --- MUDANÇA: Agora recebemos o valor_pago do front-end ---
     registro_in: schema.RegistroEstacionamentoUpdate,
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
 ):
-    """
-    Registra a saída de um veículo (FECHA o registro) com o valor
-    que foi calculado e pago.
-    """
     db_registro = repository.get_registro_aberto_por_placa(db, veiculo_placa=placa)
     if db_registro is None:
         raise HTTPException(
             status_code=404, detail="Nenhum registro de entrada ativo encontrado."
         )
 
-    # A lógica de cálculo foi MOVIDA para o GET.
-    # Esta função agora apenas SALVA.
     return repository.update_registro_saida(
         db=db, db_registro=db_registro, valor_pago=registro_in.valor_pago
     )

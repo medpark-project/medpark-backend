@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 
 from sqlalchemy.orm import Session
 
@@ -6,6 +6,7 @@ from src.assinatura_plano import repository as assinatura_repo
 from src.assinatura_plano import schema as assinatura_schema
 from src.mensalista import repository as mensalista_repo
 from src.mensalista import schema as mensalista_schema
+from src.pagamento_mensalidade import model as pagamento_model
 from src.veiculo import repository as veiculo_repo
 from src.veiculo import schema as veiculo_schema
 
@@ -77,6 +78,8 @@ def update_status_solicitacao(
             db=db, mensalista=novo_mensalista_data
         )
 
+        db.flush()
+
         veiculo_existente = veiculo_repo.get_veiculo_by_placa(
             db, placa=db_solicitacao.placa_veiculo
         )
@@ -90,7 +93,7 @@ def update_status_solicitacao(
                 placa=db_solicitacao.placa_veiculo,
                 tipo_veiculo_id=db_solicitacao.tipo_veiculo_id,
                 mensalista_id=novo_mensalista.id,
-                modelo=db_solicitacao.modelo_veiculo,  # <-- Adiciona o modelo
+                modelo=db_solicitacao.modelo_veiculo,
                 cor=db_solicitacao.cor_veiculo,
             )
             veiculo_repo.create_veiculo(db=db, veiculo=novo_veiculo_data)
@@ -98,9 +101,24 @@ def update_status_solicitacao(
         nova_assinatura_data = assinatura_schema.AssinaturaPlanoCreate(
             mensalista_id=novo_mensalista.id,
             plano_id=db_solicitacao.plano_id,
-            data_inicio=date.today(),  # A assinatura começa no dia da aprovação
+            data_inicio=date.today(),
         )
-        assinatura_repo.create_assinatura(db=db, assinatura=nova_assinatura_data)
+        nova_assinatura = assinatura_repo.create_assinatura(
+            db=db, assinatura=nova_assinatura_data
+        )
+
+        novo_mensalista.assinaturas = [nova_assinatura]
+
+        hoje = date.today()
+        vencimento = hoje + timedelta(days=5)
+        mes_referencia = int(hoje.strftime("%Y%m"))
+
+        novo_pagamento = pagamento_model.PagamentoMensalidade(
+            assinatura_id=nova_assinatura.id,
+            data_vencimento=vencimento,
+            mes_referencia=mes_referencia,
+        )
+        db.add(novo_pagamento)
 
     db.commit()
     db.refresh(db_solicitacao)

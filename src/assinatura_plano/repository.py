@@ -1,6 +1,6 @@
 from datetime import date
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from . import model, schema
 
@@ -28,6 +28,10 @@ def get_assinatura_ativa_por_mensalista(
 ) -> model.AssinaturaPlano | None:
     return (
         db.query(model.AssinaturaPlano)
+        .options(
+            joinedload(model.AssinaturaPlano.plano),
+            joinedload(model.AssinaturaPlano.pagamentos),
+        )
         .filter(
             model.AssinaturaPlano.mensalista_id == mensalista_id,
             model.AssinaturaPlano.status == model.StatusAssinatura.ATIVA,

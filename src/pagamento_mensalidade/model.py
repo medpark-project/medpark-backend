@@ -39,3 +39,13 @@ class PagamentoMensalidade(Base):
     assinatura_id = Column(Integer, ForeignKey("assinaturas_plano.id"), nullable=False)
 
     assinatura = relationship("AssinaturaPlano", back_populates="pagamentos")
+
+    @property
+    def valor_cobranca(self) -> float:
+        if self.valor_pago is not None:
+            return self.valor_pago
+
+        if self.assinatura and self.assinatura.plano:
+            return self.assinatura.plano.preco_mensal
+
+        return 0.0
