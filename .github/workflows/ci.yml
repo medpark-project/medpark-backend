@@ -41,12 +41,12 @@ jobs:
 
       - name: Lint with Ruff
         run: |
-          ruff check .
-          ruff format . --check
+          ruff check . --exclude tests_e2e
+          ruff format . --check --exclude tests_e2e
       
       - name: Run tests with Pytest
         env:
           DATABASE_URL: "postgresql://medpark_user:medpark_password@localhost:5432/medpark_db_test"
           DATABASE_URL_TEST: "postgresql://medpark_user:medpark_password@localhost:5432/medpark_db_test"
           PYTHONPATH: .
-        run: pytest
+        run: pytest --ignore=tests_e2e

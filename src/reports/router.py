@@ -18,7 +18,6 @@ def get_daily_revenue_report(
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
-    """Retorna a receita agregada por dia dos últimos 7 dias."""
     return repository.get_revenue_last_7_days(db)
 
 
@@ -27,7 +26,6 @@ def get_hourly_entries_report(
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
-    """Retorna o total de entradas de veículos por hora."""
     return repository.get_entries_by_hour(db)
 
 
@@ -36,7 +34,6 @@ def get_revenue_breakdown_report(
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
-    """Retorna o faturamento total dividido entre Avulso e Mensalista."""
     return repository.get_revenue_breakdown(db)
 
 
@@ -45,8 +42,14 @@ def get_avg_stay_time_report(
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
-    """Retorna o tempo médio de permanência formatado (ex: '2h 30m')."""
     return {"average_stay_time": repository.get_avg_stay_time(db)}
+
+
+@router.get("/metrics/transactions-today")
+def get_transactions_today_report(
+    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)
+):
+    return {"transactions_today": repository.get_transactions_today(db)}
 
 
 @router.get("/metrics/total-revenue-month")

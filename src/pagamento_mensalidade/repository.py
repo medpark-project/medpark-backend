@@ -58,7 +58,17 @@ def update_pagamento(
 
 def gerar_faturas_mensais(db: Session):
     hoje = date.today()
-    mes_atual_int = int(hoje.strftime("%Y%m"))  # Ex: 202511
+
+    if hoje.month == 12:
+        proximo_mes = 1
+        ano_referencia = hoje.year + 1
+    else:
+        proximo_mes = hoje.month + 1
+        ano_referencia = hoje.year
+
+    mes_referencia_alvo = int(f"{ano_referencia}{proximo_mes:02d}")
+
+    print(f"--- Gerando faturas para o mês de referência: {mes_referencia_alvo} ---")
 
     assinaturas_ativas = (
         db.query(AssinaturaPlano)
@@ -73,23 +83,21 @@ def gerar_faturas_mensais(db: Session):
             db.query(model.PagamentoMensalidade)
             .filter(
                 model.PagamentoMensalidade.assinatura_id == assinatura.id,
-                model.PagamentoMensalidade.mes_referencia == mes_atual_int,
+                model.PagamentoMensalidade.mes_referencia == mes_referencia_alvo,
             )
             .first()
         )
 
         if not fatura_existente:
             try:
-                vencimento = date(hoje.year, hoje.month, 10)
-                if vencimento < hoje:
-                    vencimento = hoje
+                vencimento = date(ano_referencia, proximo_mes, 10)
             except ValueError:
-                vencimento = hoje
+                vencimento = date(ano_referencia, proximo_mes, 1)
 
             nova_fatura = model.PagamentoMensalidade(
                 assinatura_id=assinatura.id,
                 data_vencimento=vencimento,
-                mes_referencia=mes_atual_int,
+                mes_referencia=mes_referencia_alvo,
                 status=model.StatusPagamento.PENDENTE,
                 valor_pago=None,
             )

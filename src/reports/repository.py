@@ -160,10 +160,8 @@ def get_revenue_last_7_days(db: Session):
 
 
 def get_entries_by_hour(db: Session):
-    """Conta o total de entradas de veículos por hora DO DIA LOCAL (últimos 30 dias)."""
     um_mes_atras = datetime.now() - timedelta(days=30)
 
-    # --- CORREÇÃO AQUI ---
     local_hora_entrada = _get_local_time(RegistroEstacionamento.hora_entrada)
 
     registros = (
@@ -176,7 +174,6 @@ def get_entries_by_hour(db: Session):
         .order_by(extract("hour", local_hora_entrada))  # Ordena pela hora local
     ).all()
 
-    # Formata para o gráfico
     return [{"hour": f"{int(h):02d}:00", "vehicles": t} for h, t in registros]
 
 
@@ -239,3 +236,31 @@ def get_financial_transactions(db: Session, limit: int = 20):
     lista_unificada.sort(key=lambda x: x["data"], reverse=True)
 
     return lista_unificada[:limit]
+
+
+def get_transactions_today(db: Session) -> int:
+    hoje_local = (datetime.now() - timedelta(hours=3)).date()
+
+    local_hora_saida = _get_local_time(RegistroEstacionamento.hora_saida)
+
+    total_avulsos = (
+        db.query(func.count(RegistroEstacionamento.id))
+        .filter(
+            cast(local_hora_saida, Date) == hoje_local,
+            RegistroEstacionamento.valor_pago > 0,
+        )
+        .scalar()
+        or 0
+    )
+
+    total_mensalistas = (
+        db.query(func.count(PagamentoMensalidade.id))
+        .filter(
+            PagamentoMensalidade.data_pagamento == hoje_local,
+            PagamentoMensalidade.status == StatusPagamento.PAGO,
+        )
+        .scalar()
+        or 0
+    )
+
+    return total_avulsos + total_mensalistas
