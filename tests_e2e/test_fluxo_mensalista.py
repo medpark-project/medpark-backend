@@ -183,7 +183,7 @@ def test_ciclo_de_vida_mensalista(driver):
     time.sleep(1)
     clicar(driver, "//*[contains(text(), 'PIX')]")
     time.sleep(2)
-    clicar(driver, "//button[contains(text(), 'Return to Homepage')]") # O 
+    clicar(driver, "//button[contains(text(), 'Return to Homepage')]") 
     time.sleep(DELAY)
     print("Mensalidade Paga!")
 
@@ -229,8 +229,17 @@ def test_ciclo_de_vida_mensalista(driver):
     clicar(driver, "//button[contains(text(), 'Save Changes')]")
     print("Assinatura Atualizada!")
 
-    fazer_logout()
+    fazer_logout(driver)
 
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//h1[contains(text(), 'Pay Your Parking')]")))
+    
+    inputs_placa = driver.find_elements(By.CSS_SELECTOR, "input[placeholder*='ABC-1234']")
+    input_mensalista = inputs_placa[1]
+    
+    input_mensalista.clear()
+    input_mensalista.send_keys(PLACA_TESTE)
+    time.sleep(1)
+    
     clicar(driver, "//button[contains(text(), 'Check Subscription')]")
     
     WebDriverWait(driver, 10).until(
