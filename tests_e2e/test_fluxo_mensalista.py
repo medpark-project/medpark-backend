@@ -10,14 +10,17 @@ from selenium.webdriver.support import expected_conditions as EC
 
 FRONTEND_URL = "https://medpark-frontend.vercel.app"
 DELAY = 1.5 
-NOME_TESTE = "Alana Santos"
-EMAIL_TESTE = "alanas@medpark.com"
-PLACA_TESTE = "ALA-1234"
-CPF_TESTE = "251.056.950-38"
+NOME_TESTE = "Felipe Moura"
+EMAIL_TESTE = "felipe@medpark.com"
+PLACA_TESTE = "FEL-1P34"
+CPF_TESTE = "004.758.600-12"
 RG_TESTE = "123435"
 TELEFONE_TESTE = "6199009900"
-MODELO_TESTE = "Renault Kwid"
-COR_TESTE = "Rosa"
+MODELO_TESTE = "Ford Ka"
+COR_TESTE = "Cinza"
+NOVO_PLANO_NOME = "Plano Plantonista"
+NOVO_PLANO_DESCRIPTION = "Plano para plantonistas"
+NOVO_PLANO_PRECO = "250.0"
 
 LOGIN_ADMIN = "brunna@gmail.com"
 SENHA_ADMIN = "senha123"
@@ -63,6 +66,27 @@ def selecionar_dropdown(driver, placeholder_text, option_text):
     
     option_xpath = f"//div[@role='option']//span[contains(text(), '{option_text}')]"
     clicar(driver, option_xpath)
+
+def fazer_login(driver):
+    clicar(driver, "//button[contains(text(), 'Employee Access')]")
+    WebDriverWait(driver, 5).until(EC.visibility_of_element_located((By.ID, "email")))
+    digitar(driver, "email", LOGIN_ADMIN)
+    digitar(driver, "password", SENHA_ADMIN)
+    print("Procurando botão Login...")
+    submit_btn = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Login')]"))
+    )
+    
+    driver.execute_script("arguments[0].click();", submit_btn)   
+
+    WebDriverWait(driver, 10).until(EC.url_contains("/dashboard"))
+    print("Login Sucesso!")
+    time.sleep(2)
+
+def fazer_logout(driver):
+    driver.find_element(By.CSS_SELECTOR, "nav ~ div button").click()
+    print("Admin deslogado.")
+    time.sleep(DELAY)
 
 def test_ciclo_de_vida_mensalista(driver):
 
@@ -113,25 +137,9 @@ def test_ciclo_de_vida_mensalista(driver):
     clicar(driver, "//button[contains(text(), 'Return to Homepage')]")
     time.sleep(DELAY)
     
-    clicar(driver, "//button[contains(text(), 'Employee Access')]")
-    WebDriverWait(driver, 5).until(EC.visibility_of_element_located((By.ID, "email")))
-    digitar(driver, "email", LOGIN_ADMIN)
-    digitar(driver, "password", SENHA_ADMIN)
-    print("Procurando botão Login...")
-    submit_btn = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Login')]"))
-    )
-    
-    driver.execute_script("arguments[0].click();", submit_btn)   
+    fazer_login(driver)
 
-    WebDriverWait(driver, 10).until(EC.url_contains("/dashboard"))
-    print("✅ Login Sucesso!")
-    time.sleep(2)
-    WebDriverWait(driver, 10).until(EC.url_contains("/dashboard"))
-    print("Admin logado.")
-    time.sleep(DELAY)
-
-    driver.get(f"{FRONTEND_URL}/monthly-parkers")
+    driver.find_element(By.XPATH, "//button[contains(text(), 'Monthly Parkers')]").click()
     print("Procurando solicitação pendente...")
     
     xpath_approve = f"//tr[contains(., '{NOME_TESTE}')]//button[contains(text(), 'Approve')]"
@@ -140,15 +148,20 @@ def test_ciclo_de_vida_mensalista(driver):
     print("Solicitação Aprovada! Mensalista criado.")
     time.sleep(DELAY)
 
-    try:
-        driver.find_element(By.CSS_SELECTOR, "nav ~ div button").click()
-    except:
-        driver.get(FRONTEND_URL)
+    print("Criando Novo Plano...")
+    driver.find_element(By.XPATH, "//button[contains(text(), 'Plans & Tariffs')]").click()
+    clicar(driver, "//button[contains(text(), 'Add New Plan')]")
     
-    print("Admin deslogado.")
-    time.sleep(DELAY)
+    digitar(driver, "plan-name", NOVO_PLANO_NOME)
+    digitar(driver, "monthly-price", NOVO_PLANO_PRECO)
+    digitar(driver, "description", NOVO_PLANO_DESCRIPTION)
+    clicar(driver, "//button[contains(text(), 'Save Plan')]")
+    time.sleep(1)
+    print(f"✅ Plano '{NOVO_PLANO_NOME}' criado.")
 
-    driver.get(FRONTEND_URL)
+    fazer_logout(driver)
+
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//h1[contains(text(), 'Pay Your Parking')]")))
     
     inputs_placa = driver.find_elements(By.CSS_SELECTOR, "input[placeholder*='ABC-1234']")
     input_mensalista = inputs_placa[1]
@@ -174,20 +187,13 @@ def test_ciclo_de_vida_mensalista(driver):
     time.sleep(DELAY)
     print("Mensalidade Paga!")
 
-    clicar(driver, "//button[contains(text(), 'Employee Access')]")
-    digitar(driver, "email", LOGIN_ADMIN)
-    digitar(driver, "password", SENHA_ADMIN)
-    print("Procurando botão Login...")
-    submit_btn = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Login')]"))
-    )
-    
-    driver.execute_script("arguments[0].click();", submit_btn)  
+    fazer_login(driver)
+
     WebDriverWait(driver, 10).until(EC.url_contains("/dashboard"))
     
-    driver.get(f"{FRONTEND_URL}/patio-control")
+    clicar(driver, "//button[contains(text(), 'Patio Control')]")
     
-    print(f"🚗 Carro {PLACA_TESTE} entrando...")
+    print(f"Carro {PLACA_TESTE} entrando...")
     digitar(driver, "licensePlate", PLACA_TESTE)
     clicar(driver, "//button[contains(text(), 'Confirm Entry')]")
     
@@ -201,7 +207,6 @@ def test_ciclo_de_vida_mensalista(driver):
     xpath_saida = f"//tr[contains(., '{PLACA_TESTE}')]//button[contains(text(), 'Register Exit')]"
 
     clicar(driver, xpath_saida)
-    
 
     WebDriverWait(driver, 3).until(
         EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Total to Pay')]"))
@@ -210,3 +215,27 @@ def test_ciclo_de_vida_mensalista(driver):
     print("Mensalista liberado sem cobrança!")
 
     time.sleep(3)
+
+    clicar(driver, "//button[contains(text(), 'Monthly Parkers')]")
+
+    xpath_details = f"//tr[contains(., '{NOME_TESTE}')]//button[contains(text(), 'View Details')]"
+    clicar(driver, xpath_details)
+    
+    clicar(driver, "//a[contains(text(), 'Edit Subscriber')] | //button[contains(text(), 'Edit Subscriber')]")
+
+    print(f"Mudando para o plano '{NOVO_PLANO_NOME}'...")
+    selecionar_dropdown(driver, "Plano Básico Diário", NOVO_PLANO_NOME)
+    
+    clicar(driver, "//button[contains(text(), 'Save Changes')]")
+    print("Assinatura Atualizada!")
+
+    fazer_logout()
+
+    clicar(driver, "//button[contains(text(), 'Check Subscription')]")
+    
+    WebDriverWait(driver, 10).until(
+        EC.text_to_be_present_in_element((By.TAG_NAME, "body"), NOME_TESTE)
+    )
+    print("Assinatura encontrada!")
+
+    print("TESTE DE CICLO DE VIDA COMPLEXO: SUCESSO!")
