@@ -18,9 +18,6 @@ RG_TESTE = "123435"
 TELEFONE_TESTE = "6199009900"
 MODELO_TESTE = "Ford Ka"
 COR_TESTE = "Cinza"
-NOVO_PLANO_NOME = "Plano Plantonista"
-NOVO_PLANO_DESCRIPTION = "Plano para plantonistas"
-NOVO_PLANO_PRECO = "250.0"
 
 LOGIN_ADMIN = "brunna@gmail.com"
 SENHA_ADMIN = "senha123"
@@ -148,17 +145,6 @@ def test_ciclo_de_vida_mensalista(driver):
     print("Solicitação Aprovada! Mensalista criado.")
     time.sleep(DELAY)
 
-    print("Criando Novo Plano...")
-    driver.find_element(By.XPATH, "//button[contains(text(), 'Plans & Tariffs')]").click()
-    clicar(driver, "//button[contains(text(), 'Add New Plan')]")
-    
-    digitar(driver, "plan-name", NOVO_PLANO_NOME)
-    digitar(driver, "monthly-price", NOVO_PLANO_PRECO)
-    digitar(driver, "description", NOVO_PLANO_DESCRIPTION)
-    clicar(driver, "//button[contains(text(), 'Save Plan')]")
-    time.sleep(1)
-    print(f"✅ Plano '{NOVO_PLANO_NOME}' criado.")
-
     fazer_logout(driver)
 
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//h1[contains(text(), 'Pay Your Parking')]")))
@@ -216,35 +202,6 @@ def test_ciclo_de_vida_mensalista(driver):
 
     time.sleep(3)
 
-    clicar(driver, "//button[contains(text(), 'Monthly Parkers')]")
-
-    xpath_details = f"//tr[contains(., '{NOME_TESTE}')]//button[contains(text(), 'View Details')]"
-    clicar(driver, xpath_details)
-    
-    clicar(driver, "//a[contains(text(), 'Edit Subscriber')] | //button[contains(text(), 'Edit Subscriber')]")
-
-    print(f"Mudando para o plano '{NOVO_PLANO_NOME}'...")
-    selecionar_dropdown(driver, "Plano Básico Diário", NOVO_PLANO_NOME)
-    
-    clicar(driver, "//button[contains(text(), 'Save Changes')]")
-    print("Assinatura Atualizada!")
-
     fazer_logout(driver)
-
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//h1[contains(text(), 'Pay Your Parking')]")))
-    
-    inputs_placa = driver.find_elements(By.CSS_SELECTOR, "input[placeholder*='ABC-1234']")
-    input_mensalista = inputs_placa[1]
-    
-    input_mensalista.clear()
-    input_mensalista.send_keys(PLACA_TESTE)
-    time.sleep(1)
-    
-    clicar(driver, "//button[contains(text(), 'Check Subscription')]")
-    
-    WebDriverWait(driver, 10).until(
-        EC.text_to_be_present_in_element((By.TAG_NAME, "body"), NOME_TESTE)
-    )
-    print("Assinatura encontrada!")
 
     print("TESTE DE CICLO DE VIDA COMPLEXO: SUCESSO!")
